@@ -28,6 +28,8 @@ func GetHandler(cmdNum command) (handler, error) {
 	switch cmdNum {
 	case usage:
 		return handlerFuncs.NewUsageHandler(), nil
+	case baseline:
+		return handlerFuncs.NewBaselineHandler(), nil
 	default:
 		return nil, ErrNotImplemented
 	}
