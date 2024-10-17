@@ -3,12 +3,9 @@ package handler
 import (
 	"context"
 	"fmt"
-	"time"
 )
 
-type UsageHandler struct {
-	// need to use pkg markov
-}
+type UsageHandler struct{}
 
 func NewUsageHandler() *UsageHandler {
 	return &UsageHandler{}
@@ -27,9 +24,6 @@ Options:
   -l N    Prefix length`
 
 func (u *UsageHandler) HandleFunc(ctx context.Context) error {
-	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
-	defer cancel()
-
 	fmt.Println(HelpMsg)
 
 	return nil

@@ -5,8 +5,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	handlerFuncs "markov-chain/handler"
 	"os"
+
+	handlerFuncs "markov-chain/handler"
 )
 
 type command int
@@ -19,11 +20,18 @@ const (
 	usage
 )
 
-var (
-	ErrNoCommand      = errors.New("no command chosen")
-	ErrNotImplemented = errors.New("method not implemented or never exist")
-	ErrFlagNotExist   = errors.New("flag not exist")
-)
+type handler interface {
+	HandleFunc(ctx context.Context) error
+}
+
+func GetHandler(cmdNum command) (handler, error) {
+	switch cmdNum {
+	case usage:
+		return handlerFuncs.NewUsageHandler(), nil
+	default:
+		return nil, ErrNotImplemented
+	}
+}
 
 type app struct {
 	args []string
@@ -38,6 +46,11 @@ func NewApp(args []string) appRunner {
 		args: args,
 	}
 }
+
+var (
+	ErrNotImplemented = errors.New("method not implemented or never exist")
+	ErrFlagNotExist   = errors.New("flag not exist")
+)
 
 func (a *app) Run(ctx context.Context) error {
 	// listen from context deadline
@@ -109,19 +122,6 @@ func (a *app) gateway() ([]command, error) {
 	}
 
 	return cmds, nil
-}
-
-type handler interface {
-	HandleFunc(ctx context.Context) error
-}
-
-func GetHandler(cmdNum command) (handler, error) {
-	switch cmdNum {
-	case usage:
-		return handlerFuncs.NewUsageHandler(), nil
-	default:
-		return nil, ErrNotImplemented
-	}
 }
 
 func main() {
